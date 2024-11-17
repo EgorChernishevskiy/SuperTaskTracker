@@ -1,0 +1,15 @@
+---
+  server:
+    port: 8081
+  jwt:
+    secret: dasd231adsdge21352adadcxzcvhd321edsadadasdadxzxc3213dasdsxzcasdczdcszd
+    lifetime: 30m
+  spring:
+    datasource:
+      url: jdbc:postgresql://localhost/super_task_tracker
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
