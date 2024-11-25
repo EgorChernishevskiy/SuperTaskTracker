@@ -8,12 +8,14 @@ import org.example.api.exeptions.BadRequestException;
 import org.example.api.mappers.TaskDtoMapper;
 import org.example.store.entities.TaskEntity;
 import org.example.store.entities.TaskStateEntity;
+import org.example.store.entities.UserEntity;
 import org.example.store.repositories.TaskRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Comparator;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Transactional
@@ -33,7 +35,14 @@ public class TaskController {
     @GetMapping(GET_TASKS)
     public List<TaskDto> getTasks(@PathVariable("task_state_id") Long taskStateId) {
 
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
         TaskStateEntity taskState = controllerHelper.getTaskStateIdOrThrowException(taskStateId);
+
+        if (!Objects.equals(taskState.getProject().getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
+
 
         return taskState
                 .getTasks()
@@ -59,6 +68,12 @@ public class TaskController {
 
         TaskStateEntity taskState = controllerHelper.getTaskStateIdOrThrowException(taskStateId);
 
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        if (!Objects.equals(taskState.getProject().getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
+
         int newPosition = taskState.getTasks().size();
 
         TaskEntity newTask = TaskEntity.builder()
@@ -79,6 +94,12 @@ public class TaskController {
             @RequestParam(name = "description", required = false) String description) {
 
         TaskEntity taskToUpdate = controllerHelper.getTaskIdOrThrowException(taskId);
+
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        if (!Objects.equals(taskToUpdate.getTaskState().getProject().getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
 
         if (taskName != null && !taskName.isBlank()) {
             taskToUpdate.setName(taskName);
@@ -103,6 +124,13 @@ public class TaskController {
 
         TaskEntity taskToChange = controllerHelper.getTaskIdOrThrowException(taskId);
         TaskStateEntity taskState = taskToChange.getTaskState();
+
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        if (!Objects.equals(taskState.getProject().getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
+
         List<TaskEntity> tasks = taskState.getTasks();
 
         if (newPosition < 0 || newPosition >= tasks.size()) {
@@ -126,6 +154,13 @@ public class TaskController {
 
         TaskEntity taskToDelete = controllerHelper.getTaskIdOrThrowException(taskId);
         TaskStateEntity taskState = taskToDelete.getTaskState();
+
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        if (!Objects.equals(taskState.getProject().getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
+
         List<TaskEntity> tasks = taskState.getTasks();
 
         tasks.remove(taskToDelete);

@@ -28,9 +28,9 @@ public class TaskStateController {
 
     public static final String GET_TASK_STATES = "/api/projects/{project_id}/task_states";
     public static final String CREATE_TASK_STATE = "/api/projects/{project_id}/task_states";
-    public static final String UPDATE_TASK_STATE = "/api/task_states/{task_state_id}";
-    public static final String CHANGE_TASK_STATE_POSITION = "/api/task_states/{task_state_id}/position";
-    private static final String DELETE_TASK_STATE = "/api/task-states/{task_state_id}";
+    public static final String UPDATE_TASK_STATE = "/api/projects/{project_id}/task_states/{task_state_id}";
+    public static final String CHANGE_TASK_STATE_POSITION = "/api/projects/{project_id}/task_states/{task_state_id}/position";
+    private static final String DELETE_TASK_STATE = "/api/projects/{project_id}/task-states/{task_state_id}";
 
     @GetMapping(GET_TASK_STATES)
     public List<TaskStateDto> getTaskStates(@PathVariable("project_id") Long projectId) {
@@ -65,7 +65,7 @@ public class TaskStateController {
         }
 
         if (!Objects.equals(project.getAppUser().getId(), currentUser.getId())) {
-            throw new BadRequestException("You do not have permission to access this project's info.");
+            throw new BadRequestException("You do not have permission to access this project.");
         }
 
         Optional<TaskStateEntity> optionalAnotherTaskState = Optional.empty();
@@ -106,9 +106,18 @@ public class TaskStateController {
 
     @PatchMapping(UPDATE_TASK_STATE)
     public TaskStateDto updateTaskState(
+            @PathVariable(name = "project_id") Long projectId,
             @PathVariable(name = "task_state_id") Long taskStateId,
             @RequestParam(name = "task_state_name") String taskStateName
     ) {
+
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        final ProjectEntity project = controllerHelper.getProjectOrThrowException(projectId);
+
+        if (!Objects.equals(project.getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
 
         if (taskStateName.isBlank()) {
             throw new BadRequestException("Task state name can't be empty.");
@@ -135,13 +144,21 @@ public class TaskStateController {
 
     @PatchMapping(CHANGE_TASK_STATE_POSITION)
     public TaskStateDto changeTaskStatePosition(
+            @PathVariable(name = "project_id") Long projectId,
             @PathVariable(name = "task_state_id") Long taskStateId,
-            @RequestParam(name = "left_task_state_id", required = false) Optional<Long> optionalLeftTaskStateId) {
+            @RequestParam(name = "left_task_state_id", required = false) Optional<Long> optionalLeftTaskStateId
+    ) {
+
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        final ProjectEntity project = controllerHelper.getProjectOrThrowException(projectId);
+
+        if (!Objects.equals(project.getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
 
         TaskStateEntity taskToChange = controllerHelper
                 .getTaskStateIdOrThrowException(taskStateId);
-
-        ProjectEntity project = taskToChange.getProject();
 
         Optional<Long> optionalOldLeftTaskStateId = taskToChange
                 .getLeftTaskState()
@@ -219,7 +236,18 @@ public class TaskStateController {
     }
 
     @DeleteMapping(DELETE_TASK_STATE)
-    public ResponseEntity<String> deleteTaskState(@PathVariable(name = "task_state_id") Long taskStateId) {
+    public ResponseEntity<String> deleteTaskState(
+            @PathVariable(name = "project_id") Long projectId,
+            @PathVariable(name = "task_state_id"
+            ) Long taskStateId) {
+
+        final UserEntity currentUser = controllerHelper.getCurrentUser();
+
+        final ProjectEntity project = controllerHelper.getProjectOrThrowException(projectId);
+
+        if (!Objects.equals(project.getAppUser().getId(), currentUser.getId())) {
+            throw new BadRequestException("You do not have permission to access this project.");
+        }
 
         TaskStateEntity changeTaskState = controllerHelper.getTaskStateIdOrThrowException(taskStateId);
 

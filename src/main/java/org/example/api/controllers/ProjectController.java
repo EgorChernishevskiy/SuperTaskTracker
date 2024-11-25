@@ -9,10 +9,7 @@ import org.example.api.mappers.ProjectDtoMapper;
 import org.example.store.entities.ProjectEntity;
 import org.example.store.entities.UserEntity;
 import org.example.store.repositories.ProjectRepository;
-import org.example.store.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,10 +41,6 @@ public class ProjectController {
 
         prefixName = prefixName.filter(name -> !name.trim().isEmpty());
 
-//        Stream<ProjectEntity> projectStream = prefixName
-//                .map(projectRepository::streamAllByNameStartsWithIgnoreCase)
-//                .orElseGet(projectRepository::streamAllBy);
-
         final Stream<ProjectEntity> projectStream = prefixName
                 .map(name -> projectRepository.streamAllByNameStartsWithIgnoreCaseAndAppUser(name, currentUser))
                 .orElseGet(() -> projectRepository.streamAllByAppUser(currentUser));
@@ -66,16 +59,6 @@ public class ProjectController {
         if (name.trim().isEmpty()) {
             throw new BadRequestException("Name cannot be empty");
         }
-
-//        projectRepository.findByName(name).ifPresent(project -> {
-//            throw new BadRequestException(String.format("Project \"%s\" already exists", name));
-//        });
-//
-//        ProjectEntity project = projectRepository.saveAndFlush(
-//                ProjectEntity.builder()
-//                        .name(name)
-//                        .build()
-//        );
 
         projectRepository.findByNameAndAppUser(name, currentUser).ifPresent(project -> {
             throw new BadRequestException(String.format("Project \"%s\" already exists", name));
@@ -111,12 +94,6 @@ public class ProjectController {
                 .ifPresent(anotherProject -> {
                     throw new BadRequestException(String.format("Project \"%s\" already exists", name));
                 });
-
-//        projectRepository
-//                .findByName(name).filter(anotherProject -> !Objects.equals(anotherProject.getId(), projectId))
-//                .ifPresent(anotherProject -> {
-//                    throw new BadRequestException(String.format("Project \"%s\" already exists", name));
-//                });
 
         project.setName(name);
         project = projectRepository.saveAndFlush(project);
