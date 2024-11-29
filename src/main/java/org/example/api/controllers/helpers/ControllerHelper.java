@@ -2,7 +2,7 @@ package org.example.api.controllers.helpers;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.api.exeptions.NotFoundException;
+import org.example.api.exceptions.NotFoundException;
 import org.example.store.entities.ProjectEntity;
 import org.example.store.entities.TaskEntity;
 import org.example.store.entities.TaskStateEntity;

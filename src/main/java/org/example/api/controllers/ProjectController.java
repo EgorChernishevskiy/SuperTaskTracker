@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.api.controllers.helpers.ControllerHelper;
 import org.example.api.dto.ProjectDto;
-import org.example.api.exeptions.BadRequestException;
+import org.example.api.exceptions.BadRequestException;
 import org.example.api.mappers.ProjectDtoMapper;
 import org.example.store.entities.ProjectEntity;
 import org.example.store.entities.UserEntity;

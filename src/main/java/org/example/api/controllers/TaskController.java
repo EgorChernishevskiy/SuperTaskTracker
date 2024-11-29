@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.api.controllers.helpers.ControllerHelper;
 import org.example.api.dto.TaskDto;
-import org.example.api.exeptions.BadRequestException;
+import org.example.api.exceptions.BadRequestException;
 import org.example.api.mappers.TaskDtoMapper;
 import org.example.store.entities.TaskEntity;
 import org.example.store.entities.TaskStateEntity;

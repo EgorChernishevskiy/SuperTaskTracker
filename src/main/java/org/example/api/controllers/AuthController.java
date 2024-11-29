@@ -3,7 +3,7 @@ package org.example.api.controllers;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.api.dto.UserDto;
-import org.example.api.exeptions.BadRequestException;
+import org.example.api.exceptions.BadRequestException;
 import org.example.api.mappers.UserDtoMapper;
 import org.example.store.entities.UserEntity;
 import org.example.store.repositories.UserRepository;
@@ -54,7 +54,7 @@ public class AuthController {
     public String login(@RequestParam String name, String password) {
 
         UserEntity user = userRepository.findByUsername(name)
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new BadRequestException("Invalid credentials"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadRequestException("Invalid credentials");

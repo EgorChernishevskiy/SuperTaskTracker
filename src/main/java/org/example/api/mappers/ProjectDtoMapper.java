@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectDtoMapper {
 
-    public final ProjectDto createProjectDto(ProjectEntity entity) {
+    public ProjectDto createProjectDto(ProjectEntity entity) {
 
         return ProjectDto.builder()
                 .id(entity.getId())

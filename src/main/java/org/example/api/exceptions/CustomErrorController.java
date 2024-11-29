@@ -1,4 +1,4 @@
-package org.example.api.exeptions;
+package org.example.api.exceptions;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.error.ErrorAttributeOptions;

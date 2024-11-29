@@ -1,4 +1,4 @@
-package org.example.api.exeptions;
+package org.example.api.exceptions;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;

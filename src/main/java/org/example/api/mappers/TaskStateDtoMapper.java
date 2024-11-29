@@ -13,7 +13,7 @@ public class TaskStateDtoMapper {
 
     private final TaskDtoMapper taskDtoMapper;
 
-    public final TaskStateDto createTaskStateDto(TaskStateEntity entity) {
+    public TaskStateDto createTaskStateDto(TaskStateEntity entity) {
 
         return TaskStateDto.builder()
                 .id(entity.getId())
